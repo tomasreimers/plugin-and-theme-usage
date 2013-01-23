@@ -76,13 +76,13 @@ class Plugin_and_theme_usage {
     private function get_live_blogs(){
         global $wpdb;
         return $wpdb->get_col(
-            $wpdb->prepare("SELECT blog_id FROM " . $wpdb->base_prefix . "blogs WHERE spam = 0 AND deleted = 0 AND TIMESTAMPDIFF(DAY, last_updated, NOW()) <= 365", array())
+            $wpdb->prepare("SELECT blog_id FROM " . $wpdb->base_prefix . "blogs WHERE NOT ( spam = 1 OR deleted = 1 OR archived = '1' OR (TIMESTAMPDIFF(DAY, registered, NOW()) > 365 AND last_updated = 0) )", array())
         );
     }
     private function get_dead_blogs(){
         global $wpdb;
         return $wpdb->get_col(
-            $wpdb->prepare("SELECT blog_id FROM " . $wpdb->base_prefix . "blogs WHERE spam = 1 OR deleted = 1 OR TIMESTAMPDIFF(DAY, last_updated, NOW()) > 365 OR TIMESTAMPDIFF(DAY, last_updated, NOW()) IS NULL", array())
+            $wpdb->prepare("SELECT blog_id FROM " . $wpdb->base_prefix . "blogs WHERE spam = 1 OR deleted = 1 OR archived = '1' OR (TIMESTAMPDIFF(DAY, registered, NOW()) > 365 AND last_updated = 0)", array())
         );
     }
 
@@ -146,7 +146,7 @@ class Plugin_and_theme_usage {
         <a href="settings.php?page=plugin-and-theme-usage-csv&blog_type=live&content_type=themes" class="button-secondary"><?php _e('Themes'); ?></a>
         <a href="settings.php?page=plugin-and-theme-usage-csv&blog_type=live&content_type=plugins" class="button-secondary"><?php _e('Plugins'); ?></a>
 
-        <h3><?php _e('Dead Blogs (marked as spam, deleted, OR not updated in the past 365 days)'); ?></h3>
+        <h3><?php _e('Dead Blogs (marked as spam, archived, deactivated, OR registered over a year ago and never updated)'); ?></h3>
         <a href="settings.php?page=plugin-and-theme-usage-csv&blog_type=dead&content_type=themes" class="button-secondary"><?php _e('Themes'); ?></a>
         <a href="settings.php?page=plugin-and-theme-usage-csv&blog_type=dead&content_type=plugins" class="button-secondary"><?php _e('Plugins'); ?></a>
 
