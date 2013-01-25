@@ -42,7 +42,19 @@ class Plugin_and_theme_usage {
     }
     private function analyze_plugins($blogs, $output_stream){
         global $wpdb;
-        $keys = array_keys(get_plugins());
+        // get keys
+        $keys_rough = array_keys(get_plugins());
+        // remove sitewide active plugins
+        $keys = array();
+        $sitewide_plugins_serialized = $wpdb->get_var(
+            $wpdb->prepare("SELECT meta_value FROM " . $wpdb->base_prefix . "sitemeta WHERE meta_key = 'active_sitewide_plugins'", array())
+        );
+        $sitewide_plugins = array_keys(maybe_unserialize($sitewide_plugins_serialized));
+        foreach ($keys_rough as $key){
+            if (!in_array($key, $sitewide_plugins)){
+                array_push($keys, $key);
+            }
+        }
         // render header
         $header_array = array_merge(array("BLOG ID", "BLOG NAME", "BLOG URL"), $keys);
         fputcsv($output_stream, $header_array);
@@ -133,6 +145,7 @@ class Plugin_and_theme_usage {
         }
     }
     public function render_page(){
+
         // START HTML DOCUMENT
         ?>
 

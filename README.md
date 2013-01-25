@@ -8,7 +8,7 @@ Once the plugin has been activated, visit go to the network admin settings page,
 
 In the CSV, a 1 means that the user does use that plugin/theme; a 0 means that they do not.
 
-*Note:* At the moment, network activated plugins (plugins that the network admin makes active on the entire install, and that users have no control over) will appear to have 0 users.
+*Note:* At the moment, network activated plugins are not included in the list.
 
 ## Install
 
